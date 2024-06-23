@@ -1,8 +1,8 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
 import { v4 as uuidv4 } from 'uuid';
+import Timer from "./Timer";
+
 
 function App() {
   const [count, setCount] = useState(0);
@@ -14,6 +14,9 @@ function App() {
     { id: 4, amount: 2000, date: new Date(), type: "withdraw" },
     { id: 5, amount: 650, date: new Date(), type: "deposit" },
   ]);
+
+   const [showTimer, setShowTimer] = useState(true); // ESTADO PARA MANEJAR EL TIMER
+
 
   const handleDeleteTransaction = (transaction) => {
     setTransactions((p) => p.filter((t) => t.id != transaction.id))
@@ -41,6 +44,14 @@ function App() {
     setShow((s) => !s);
   };
 
+
+  //MANEJADOR DELEVENTO PARA MSTRAR EL TIMER
+  const toggleTimer = () => {
+    setShowTimer((t) => !t);
+  };
+
+
+
   return (
     <>
       <div
@@ -59,7 +70,8 @@ function App() {
       </div>
 
       <div>
-        <h2>EJEMPLO 2 CON TRANSACTIONS</h2>
+        <h2>EJEMPLO 2 CON TRANSACTIONS {showTimer &&  <Timer/> }</h2>
+        <button onClick={toggleTimer}>{showTimer ? 'HIDE TIME' : 'SHOW TIMER'}</button>
 
         <form
         style={{border:"1px solid black", padding:"22px", display:"flex", flexDirection:"column", gap:"15",marginBottom:"30px",}}
