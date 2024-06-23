@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import { v4 as uuidv4 } from 'uuid';
 import Timer from "./Timer";
@@ -8,18 +8,42 @@ function App() {
   const [count, setCount] = useState(0);
   const [show, setShow] = useState(true);
   const [transactions, setTransactions] = useState([
-    { id: 1, amount: 20, date: new Date(), type: "withdraw" },
-    { id: 2, amount: 154, date: new Date(), type: "withdraw" },
-    { id: 3, amount: 250, date: new Date(), type: "deposit" },
-    { id: 4, amount: 2000, date: new Date(), type: "withdraw" },
-    { id: 5, amount: 650, date: new Date(), type: "deposit" },
+  
   ]);
+
+    // { id: 1, amount: 20, date: new Date(), type: "withdraw" },
+    // { id: 2, amount: 154, date: new Date(), type: "withdraw" },
+    // { id: 3, amount: 250, date: new Date(), type: "deposit" },
+    // { id: 4, amount: 2000, date: new Date(), type: "withdraw" },
+    // { id: 5, amount: 650, date: new Date(), type: "deposit" },
 
    const [showTimer, setShowTimer] = useState(true); // ESTADO PARA MANEJAR EL TIMER
 
+  const STORAGE_DATA = " DATA_TRANSACTION";
+  
+
+  // Leer las transacciones del localStorage cuando se carga el componente
+  useEffect(() => {
+    const storedTransactions = localStorage.getItem(STORAGE_DATA);
+    if (storedTransactions) {
+      const parsedTransactions = JSON.parse(storedTransactions).map(transaction => ({
+        ...transaction,
+        date: new Date(transaction.date)
+      }));
+      setTransactions(parsedTransactions);
+    }
+  }, []);
+
+
+
 
   const handleDeleteTransaction = (transaction) => {
-    setTransactions((p) => p.filter((t) => t.id != transaction.id))
+
+    setTransactions ((p) =>{
+    const updatedTransactions = p.filter((t) => t.id != transaction.id);
+    localStorage.setItem(STORAGE_DATA, JSON.stringify(updatedTransactions));
+      return updatedTransactions;
+  });
 
   };
 
@@ -33,7 +57,12 @@ function App() {
       amount: amount.value,
       date: new Date(),
     };
-    setTransactions(p => ([...p, newTransaction]))
+    setTransactions(p => {
+      const updatedTransactions = [...p, newTransaction];
+
+      localStorage.setItem(STORAGE_DATA, JSON.stringify(updatedTransactions));
+      return updatedTransactions;
+    });
   };
 
   const handleCount = () => {
